@@ -1,0 +1,7 @@
+name: WoodAddons
+version: '${project.version}'
+main: me.bially.woodaddons.Main
+api-version: 1.19
+authors: [ Bially ]
+description: Plugin that add various mechanics around wood.
+depend: [Oraxen]

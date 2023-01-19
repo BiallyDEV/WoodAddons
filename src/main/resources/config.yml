@@ -1,0 +1,8 @@
+#How many barks will drop from each log after stripping
+bark_count: 1
+
+#Option to on/off barks from nether woods
+nether_type: true
+
+#Resin drop %. Higher value will drop more often and lower will drop less often. Default: 12
+resin_drop: 12
