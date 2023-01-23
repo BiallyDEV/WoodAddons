@@ -1,7 +1,7 @@
 package me.bially.woodaddons.oraxen;
 
+import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenItems;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.shaded.customblockdata.CustomBlockData;
 import me.bially.woodaddons.Main;
 import org.bukkit.Bukkit;
@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static io.th0rgal.oraxen.api.OraxenBlocks.getNoteBlockMechanic;
-
 
 public class WoodAddonsListener implements Listener {
 
@@ -44,12 +42,10 @@ public class WoodAddonsListener implements Listener {
     public void BirchSapAddon1(final PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
-        ItemStack tap = OraxenItems.getItemById("tap").build();
+        String heldID = OraxenItems.getIdByItem(player.getInventory().getItemInMainHand());
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block.getType() == Material.BIRCH_LOG) {
-            if (player.getInventory().getItemInMainHand() == tap) {
-                NoteBlockMechanicFactory.setBlockModel(block, "birch_log_tap");
-            }
+            if (heldID.equals("tap")) OraxenBlocks.place("birch_log_tap", block.getLocation());
         }
     }
 
@@ -62,12 +58,12 @@ public class WoodAddonsListener implements Listener {
         if (event.getHand() != EquipmentSlot.HAND || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (item == null || item.getType() != Material.GLASS_BOTTLE) return;
         if (block == null || block.getType() != Material.NOTE_BLOCK) return;
-        if (!Objects.equals(getNoteBlockMechanic(block).getItemID(), "birch_log_tap") || blockCooldownList.contains(block))
+        if (!Objects.equals(OraxenBlocks.getNoteBlockMechanic(block).getItemID(), "birch_log_tap") || blockCooldownList.contains(block))
             return;
 
         item.subtract(1);
         player.getInventory().addItem(OraxenItems.getItemById("birch_sap").build());
-        NoteBlockMechanicFactory.setBlockModel(block, "birch_log_tap_cooldown");
+        OraxenBlocks.place("birch_log_tap_cooldown", block.getLocation());
         PersistentDataContainer pdc = new CustomBlockData(block, plugin);
         blockCooldownList.add(block);
         if (pdc.has(usesKey, PersistentDataType.INTEGER)) {
@@ -77,7 +73,7 @@ public class WoodAddonsListener implements Listener {
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            NoteBlockMechanicFactory.setBlockModel(block, "birch_log_tap");
+            OraxenBlocks.place("birch_log_tap", block.getLocation());
             blockCooldownList.remove(block);
             if (pdc.get(usesKey, PersistentDataType.INTEGER) >= 3) {
                 block.setType(Material.STRIPPED_BIRCH_LOG, false);
