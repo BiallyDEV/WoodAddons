@@ -66,6 +66,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,9 +87,8 @@
         <dependency>
             <groupId>com.github.th0rgal</groupId>
             <artifactId>oraxen</artifactId>
-            <version>1.148.0</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/mrspe/IdeaProjects/woodaddons/lib/oraxen-1.148.0.jar</systemPath>
+            <version>-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
