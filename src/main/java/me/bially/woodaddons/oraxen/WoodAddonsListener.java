@@ -43,14 +43,29 @@ public class WoodAddonsListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void BirchSapAddon1(final PlayerInteractEvent event) {
+        ItemStack item = event.getItem();
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
         String heldID = OraxenItems.getIdByItem(player.getInventory().getItemInMainHand());
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && block.getType() == Material.BIRCH_LOG) {
             if (heldID.equals("tap")) {
-                player.playSound(block.getLocation(), Sound.BLOCK_WOOD_PLACE, 100, 1.0F);
-                OraxenBlocks.place("birch_log_tap", block.getLocation());
+                item.subtract(1);
+                player.playSound(block.getLocation(), Sound.BLOCK_GLASS_BREAK, 100, 1.0F);
+                OraxenBlocks.place("birch_log_tap_cooldown", block.getLocation());
+                PersistentDataContainer pdc = new CustomBlockData(block, plugin);
+                blockCooldownList.add(block);
+                if (pdc.has(usesKey, PersistentDataType.INTEGER)) {
+                    pdc.set(usesKey, PersistentDataType.INTEGER, pdc.get(usesKey, PersistentDataType.INTEGER) + 1);
+                } else {
+                    pdc.set(usesKey, PersistentDataType.INTEGER, 1);
+                }
+
+
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    OraxenBlocks.place("birch_log_tap", block.getLocation());
+                    blockCooldownList.remove(block);
+                }, 200L);
             }
         }
     }
@@ -82,9 +97,9 @@ public class WoodAddonsListener implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             OraxenBlocks.place("birch_log_tap", block.getLocation());
             blockCooldownList.remove(block);
-            if (pdc.get(usesKey, PersistentDataType.INTEGER) >= 3) {
+            if (pdc.get(usesKey, PersistentDataType.INTEGER) >= 4) {
                 block.setType(Material.STRIPPED_BIRCH_LOG, false);
-                player.playSound(block.getLocation(), Sound.BLOCK_WOOD_BREAK, 100, 1.0F);
+                player.playSound(block.getLocation(), Sound.BLOCK_GLASS_BREAK, 100, 1.0F);
                 pdc.remove(usesKey);
             }
         }, 200L);
